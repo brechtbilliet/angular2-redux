@@ -1,1 +1,2 @@
-"# angular2-redux" 
+# angular-redux
+npm start
