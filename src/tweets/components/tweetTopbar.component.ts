@@ -11,8 +11,12 @@ import {Tweet} from "../entities/Tweet";
         <div>
             <div class="collapsed-content" *ngIf="!topbarCollapsed">
                 <h1><i class="fa fa-twitter"></i>&nbsp;Post a new tweet</h1>
-                <input class="form-control" [(ngModel)]="tweetContent"/><br/>
-                <button class="btn btn-primary btn-lg" [disabled]="tweetContent === ''" (click)="post($event)">
+                <textarea class="form-control" [(ngModel)]="tweetContent"
+                (keyup)="onKeyUp($event)"></textarea><br/>
+                <button
+                class="btn btn-primary btn-lg"
+                [disabled]="tweetContent === ''"
+                (click)="post($event)">
                     <i class="fa fa-envelope"></i>&nbsp;Post
                 </button>
             </div>
@@ -37,5 +41,12 @@ export class TweetTopbar {
     public post(event: any): void {
         this.store.dispatch(new actions.dataTweetsAdd(new Tweet("@brechtbilliet", this.tweetContent, false)));
         this.tweetContent = "";
+    }
+
+    public onKeyUp(event: any): void {
+        if (event.keyCode === 13) {
+            this.store.dispatch(new actions.dataTweetsAdd(new Tweet("@brechtbilliet", this.tweetContent, false)));
+            this.tweetContent = "";
+        }
     }
 }

@@ -1,4 +1,4 @@
-import {Component, Inject, Input, ChangeDetectionStrategy} from "angular2/core";
+import {Component, Inject, Input} from "angular2/core";
 import {IStore} from "redux/redux";
 import {Tweet} from "../entities/Tweet";
 import {IApplicationState} from "../../application/appState";
@@ -6,7 +6,6 @@ import * as actions from "../actions";
 
 @Component({
     selector: "tweet-sidebar",
-    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <i class="fa dp-collapse dp-collapse-right"
         [class.fa-chevron-right]="sidebarCollapsed"
