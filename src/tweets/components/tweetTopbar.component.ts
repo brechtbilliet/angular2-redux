@@ -1,14 +1,12 @@
-import {Inject } from "angular2/core";
-import {Component} from "angular2/core";
-import {TweetStore} from "../stores/TweetStore";
-import {CollapseStore, CollapsedState} from "../stores/CollapseStore";
-import {addTweet} from "../actions/tweets";
-import {toggleTopbar} from "../actions/collapse";
+import {Component, Inject, Input, ChangeDetectionStrategy} from "angular2/core";
+import {IApplicationState} from "../../application/appState";
+import {IStore} from "redux/redux";
+import * as actions from "../actions";
 import {Tweet} from "../entities/Tweet";
 
 @Component({
     selector: "tweet-topbar",
-    providers: [TweetStore, CollapseStore],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div>
             <div class="collapsed-content" *ngIf="!topbarCollapsed">
@@ -24,23 +22,20 @@ import {Tweet} from "../entities/Tweet";
         </div>`
 })
 export class TweetTopbar {
-    public tweetContent: string = "";
-    public topbarCollapsed: boolean = false;
+    @Input()
+    public topbarCollapsed: boolean;
 
-    constructor(@Inject(TweetStore) private tweetStore: TweetStore,
-                @Inject(CollapseStore) private collapseStore: CollapseStore) {
-        this.collapseStore.store.subscribe(() => {
-            var state: CollapsedState = this.collapseStore.store.getState();
-            this.topbarCollapsed = state.topbarCollapsed;
-        });
+    public tweetContent: string = "";
+
+    constructor(@Inject("Store") private store: IStore<IApplicationState>) {
     }
 
     public toggleTopbar(): void {
-        this.collapseStore.store.dispatch(toggleTopbar());
+        this.store.dispatch(new actions.pageTweetsToggleTopbar());
     }
 
     public post(event: any): void {
-        this.tweetStore.store.dispatch(addTweet(new Tweet("@user", this.tweetContent, false)));
+        this.store.dispatch(new actions.dataTweetsAdd(new Tweet("@brechtbilliet", this.tweetContent, false)));
         this.tweetContent = "";
     }
 }

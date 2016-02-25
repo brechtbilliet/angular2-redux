@@ -1,9 +1,13 @@
-require("es6-shim");
+import "es6-shim";
 import "rxjs";
-require("reflect-metadata");
-require("bootstrap/dist/css/bootstrap.css");
-require("font-awesome/css/font-awesome.css");
-require("./styles/screen.scss");
-import {bootstrap}   from "angular2/platform/browser";
-import {TweetApp} from "./components/tweetApp.component";
-bootstrap(TweetApp);
+import "reflect-metadata";
+import "bootstrap/dist/css/bootstrap.css";
+import "font-awesome/css/font-awesome.css";
+import {provide} from "angular2/core";
+import {bootstrap} from "angular2/platform/browser";
+
+import {TweetApp} from "./application/application.component";
+import {store} from "./application/Store";
+bootstrap(TweetApp, [
+    provide("Store", {useValue: store})
+]);

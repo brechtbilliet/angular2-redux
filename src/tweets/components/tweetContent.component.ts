@@ -1,18 +1,18 @@
-import {Inject } from "angular2/core";
-import {Component} from "angular2/core";
-import {TweetStore} from "../stores/TweetStore";
+import {Component, Inject, Input, ChangeDetectionStrategy} from "angular2/core";
+import {IStore} from "redux/redux";
 import {Tweet} from "../entities/Tweet";
-import {toggleTweetStar} from "../actions/tweets";
+import {IApplicationState} from "../../application/appState";
+import * as actions from "../actions";
 
 @Component({
     selector: "tweet-content",
-    providers: [TweetStore],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div>
             <h2>Feed</h2>
             <p>These are the most recent tweets</p>
             <div class="dp-tweets">
-                <div class="row dp-tweet" *ngFor="#tweet of tweets">
+                <div class="row dp-tweet" *ngFor="#tweet of tweets; #i = index">
                     <div class="col-sm-8">
                         <h3>{{tweet.name}} tweeted</h3>
                         <p>{{tweet.content}}</p>
@@ -23,23 +23,21 @@ import {toggleTweetStar} from "../actions/tweets";
                     </div>
                     <div class="col-sm-4">
                         <i class="fa fa-star pull-right"
-                        [class.starred]="tweet.isStarred"
-                        (click)="toggleStar(tweet)"></i>
+                        [class.starred]="tweet.starred"
+                        (click)="toggleStar(i)"></i>
                     </div>
                 </div>
             </div>
         </div>`
 })
 export class TweetContent {
-    public tweets: Array<Tweet> = [];
+    @Input()
+    public tweets: Array<Tweet>;
 
-    constructor(@Inject(TweetStore) private tweetStore: TweetStore) {
-        this.tweetStore.store.subscribe(() => {
-            this.tweets = this.tweetStore.store.getState();
-        });
+    constructor(@Inject("Store") private store: IStore<IApplicationState>) {
     }
 
-    public toggleStar(tweet: Tweet): void {
-        this.tweetStore.store.dispatch(toggleTweetStar(tweet.id));
+    public toggleStar(index: number): void {
+        this.store.dispatch(new actions.dataTweetsToggleTweetStar(index));
     }
 }
